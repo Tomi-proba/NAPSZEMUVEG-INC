@@ -1,0 +1,27 @@
+import * as THREE from 'three'
+
+/** A rounded rectangle centered at the origin, width x height, with corner radius. */
+export function roundedRectShape(width: number, height: number, radius: number): THREE.Shape {
+  const w = width / 2
+  const h = height / 2
+  const r = Math.min(radius, w, h)
+  const shape = new THREE.Shape()
+
+  shape.moveTo(-w + r, -h)
+  shape.lineTo(w - r, -h)
+  shape.quadraticCurveTo(w, -h, w, -h + r)
+  shape.lineTo(w, h - r)
+  shape.quadraticCurveTo(w, h, w - r, h)
+  shape.lineTo(-w + r, h)
+  shape.quadraticCurveTo(-w, h, -w, h - r)
+  shape.lineTo(-w, -h + r)
+  shape.quadraticCurveTo(-w, -h, -w + r, -h)
+
+  return shape
+}
+
+export function roundedRectPath(width: number, height: number, radius: number): THREE.Path {
+  const shape = roundedRectShape(width, height, radius)
+  const path = new THREE.Path(shape.getPoints(32))
+  return path
+}
