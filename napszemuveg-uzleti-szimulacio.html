@@ -3,16 +3,33 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Napszemüveg Inc. — Üzleti szimuláció</title>
+<title>Napszemüveg Inc.</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>
   :root{
-    --bg:#f6f6f7; --panel:#ffffff; --border:#dcdde0; --border-strong:#c7c8cc;
-    --text:#1a1b1e; --muted:#6b6f76; --accent:#1a1b1e; --accent-soft:#eef0f2;
-    --good:#1f7a3d; --bad:#b3261e; --warn:#8a6100; --warn-bg:#fff6dd; --warn-border:#e9d38a;
-    --p-player:#1a56db; --p-c1:#e05252; --p-c2:#e0a52e; --p-c3:#7b3fe4; --p-c4:#0f9b8e;
+    --bg:#f6f6f4; --panel:#ffffff; --surface-sunken:#f0f0ee; --border:#dcdcd6; --border-strong:#c5c5bd;
+    --text:#1c1d1a; --muted:#6c6d64; --accent:#1c1d1a; --accent-fg:#ffffff; --accent-soft:#ecece6;
+    --track:#e5e5df; --player:#2f5fd6;
+    --good:#1f7a3d; --bad:#b3261e; --warn:#8a6100; --warn-bg:#fdf3d8; --warn-border:#e3cd8c;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#15161a; --panel:#1c1e22; --surface-sunken:#202226; --border:#2c2e33; --border-strong:#3c3f45;
+      --text:#eceae4; --muted:#9a9c93; --accent:#eceae4; --accent-fg:#15161a; --accent-soft:#252722;
+      --track:#2a2c26; --player:#7ea2ff;
+      --good:#4ade80; --bad:#ff7a6e; --warn:#e8c15c; --warn-bg:#332c14; --warn-border:#5a4a20;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#15161a; --panel:#1c1e22; --surface-sunken:#202226; --border:#2c2e33; --border-strong:#3c3f45;
+    --text:#eceae4; --muted:#9a9c93; --accent:#eceae4; --accent-fg:#15161a; --accent-soft:#252722;
+    --track:#2a2c26; --player:#7ea2ff;
+    --good:#4ade80; --bad:#ff7a6e; --warn:#e8c15c; --warn-bg:#332c14; --warn-border:#5a4a20;
   }
   *{box-sizing:border-box;}
-  body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.45;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:"Manrope",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.45;}
+  .num, .v, table.costs td.num, table.costs th.num, .rank-table td.num, .pm-tick, .stat .v{font-family:"IBM Plex Mono","SFMono-Regular",Consolas,monospace;font-variant-numeric:tabular-nums;}
+  h1,h2{text-wrap:balance;}
   .disclaimer-bar{background:var(--warn-bg);border-bottom:1px solid var(--warn-border);color:var(--warn);
     padding:8px 16px;font-size:12.5px;text-align:center;}
   .wrap{max-width:1180px;margin:0 auto;padding:16px;}
@@ -25,16 +42,17 @@
   .col{flex:1 1 240px;min-width:220px;}
   label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:4px;}
   input[type=number], input[type=text], select{
-    width:100%;padding:7px 9px;border:1px solid var(--border-strong);border-radius:6px;background:#fff;color:var(--text);font-size:13.5px;
+    width:100%;padding:7px 9px;border:1px solid var(--border-strong);border-radius:6px;background:var(--panel);color:var(--text);font-size:13.5px;font-family:inherit;
   }
   input[type=range]{width:100%;}
   fieldset{border:1px solid var(--border);border-radius:8px;padding:12px;margin:0 0 12px 0;}
   legend{padding:0 6px;font-size:12.5px;color:var(--muted);}
   .field{margin-bottom:12px;}
-  .btn{appearance:none;border:1px solid var(--accent);background:var(--accent);color:#fff;padding:9px 16px;border-radius:7px;
-    font-size:13.5px;cursor:pointer;font-weight:600;}
+  .btn{appearance:none;border:1px solid var(--accent);background:var(--accent);color:var(--accent-fg);padding:9px 16px;border-radius:7px;
+    font-size:13.5px;cursor:pointer;font-weight:700;font-family:inherit;}
   .btn:hover{opacity:.88;}
-  .btn.secondary{background:#fff;color:var(--text);border:1px solid var(--border-strong);}
+  .btn:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible{outline:2px solid var(--player);outline-offset:2px;}
+  .btn.secondary{background:var(--panel);color:var(--text);border:1px solid var(--border-strong);}
   .btn:disabled{opacity:.45;cursor:not-allowed;}
   .btn-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
   .radio-opt{display:flex;align-items:flex-start;gap:8px;border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px;cursor:pointer;}
@@ -46,16 +64,16 @@
   .stat .k{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;}
   .stat .v{font-size:16px;font-weight:700;margin-top:2px;}
   .v.pos{color:var(--good);} .v.neg{color:var(--bad);}
-  .awareness-bar{height:8px;background:#e6e7ea;border-radius:5px;overflow:hidden;margin-top:4px;}
-  .awareness-bar > div{height:100%;background:var(--p-player);}
-  #posmap{position:relative;height:78px;border:1px solid var(--border);border-radius:8px;background:#fbfbfc;margin-top:6px;}
+  .awareness-bar{height:8px;background:var(--track);border-radius:5px;overflow:hidden;margin-top:4px;}
+  .awareness-bar > div{height:100%;background:var(--player);}
+  #posmap{position:relative;height:78px;border:1px solid var(--border);border-radius:8px;background:var(--surface-sunken);margin-top:6px;}
   .pm-axis{position:absolute;left:12px;right:12px;top:38px;height:2px;background:var(--border-strong);}
   .pm-tick{position:absolute;top:34px;font-size:10px;color:var(--muted);transform:translateX(-50%);}
   .pm-marker{position:absolute;top:20px;transform:translateX(-50%);text-align:center;width:110px;}
-  .pm-dot{width:12px;height:12px;border-radius:50%;margin:0 auto;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25);}
-  .pm-marker.player .pm-dot{width:16px;height:16px;background:var(--p-player);}
+  .pm-dot{width:12px;height:12px;border-radius:50%;margin:0 auto;border:2px solid var(--panel);box-shadow:0 0 0 1px var(--border-strong);}
+  .pm-marker.player .pm-dot{width:16px;height:16px;background:var(--player);}
   .pm-label{font-size:10px;margin-top:3px;white-space:nowrap;color:var(--muted);}
-  .pm-marker.player .pm-label{color:var(--p-player);font-weight:700;}
+  .pm-marker.player .pm-label{color:var(--player);font-weight:700;}
   .zone-label{position:absolute;top:58px;font-size:9.5px;color:var(--muted);}
   .layout{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;}
   @media (max-width:900px){.layout{grid-template-columns:1fr;}}
@@ -70,8 +88,8 @@
   table.costs th, table.costs td{border-bottom:1px solid var(--border);padding:6px 4px;text-align:left;}
   table.costs td.num, table.costs th.num{text-align:right;font-variant-numeric:tabular-nums;}
   table.costs tr.total td{font-weight:700;border-top:2px solid var(--border-strong);}
-  .modal-overlay{position:fixed;inset:0;background:rgba(20,20,22,.45);display:flex;align-items:flex-start;justify-content:center;padding:40px 16px;z-index:50;}
-  .modal-box{background:#fff;border-radius:10px;max-width:640px;width:100%;padding:20px;max-height:85vh;overflow:auto;border:1px solid var(--border);}
+  .modal-overlay{position:fixed;inset:0;background:rgba(10,10,10,.5);display:flex;align-items:flex-start;justify-content:center;padding:40px 16px;z-index:50;}
+  .modal-box{background:var(--panel);color:var(--text);border-radius:10px;max-width:640px;width:100%;padding:20px;max-height:85vh;overflow:auto;border:1px solid var(--border);}
   .modal-box .close-row{display:flex;justify-content:flex-end;margin-bottom:6px;}
   [hidden]{display:none!important;}
   .badge{display:inline-block;padding:2px 8px;border-radius:20px;background:var(--accent-soft);border:1px solid var(--border);font-size:11px;color:var(--muted);}
@@ -400,8 +418,6 @@ const CONFIG = {
       color: "#0f9b8e",
     },
   ],
-
-  playerColor: "#1a56db",
 
   // ---- Csőd ----
   bankruptcy: {
@@ -1114,7 +1130,7 @@ function renderPositionMap(){
   [0,25,50,75,100].forEach(v=>{
     const t = document.createElement("div");
     t.className = "pm-tick";
-    t.style.left = `calc(12px + ${v}% * (100% - 24px) / 100)`;
+    t.style.left = `calc(12px + (100% - 24px) * ${v/100})`;
     t.textContent = v;
     map.appendChild(t);
   });
@@ -1128,15 +1144,16 @@ function renderPositionMap(){
   const makeMarker = (position, label, color, isPlayer)=>{
     const m = document.createElement("div");
     m.className = "pm-marker" + (isPlayer?" player":"");
-    m.style.left = `calc(12px + ${position}% * (100% - 24px) / 100)`;
-    m.innerHTML = `<div class="pm-dot" style="background:${color}"></div><div class="pm-label">${label}</div>`;
+    m.style.left = `calc(12px + (100% - 24px) * ${clamp(position,0,100)/100})`;
+    const dotStyle = color ? ` style="background:${color}"` : "";
+    m.innerHTML = `<div class="pm-dot"${dotStyle}></div><div class="pm-label">${label}</div>`;
     map.appendChild(m);
   };
   for(const c of state.competitors){
     makeMarker(c.position, c.name, c.color, false);
   }
   const playerPos = Number(inPosition ? inPosition.value : state.position);
-  makeMarker(playerPos, "Te", CONFIG.playerColor, true);
+  makeMarker(playerPos, "Te", null, true); // a "Te" pötty színét a CSS --player tokenje adja (téma-érzékeny)
 }
 
 function renderFeedback(log){
@@ -1197,14 +1214,21 @@ function initCharts(){
     });
     return;
   }
+  const rootStyle = getComputedStyle(document.documentElement);
+  const mutedColor = rootStyle.getPropertyValue("--muted").trim();
+  const gridColor = rootStyle.getPropertyValue("--border").trim();
+  const playerColor = rootStyle.getPropertyValue("--player").trim();
   const commonOpts = {
     responsive:true, maintainAspectRatio:false,
     interaction:{mode:"index", intersect:false},
-    plugins:{ legend:{ position:"bottom", labels:{boxWidth:12, font:{size:11}} } },
-    scales:{ x:{ title:{display:true,text:"Hónap"} }, y:{ ticks:{ callback:v=>Number(v).toLocaleString("hu-HU") } } },
+    plugins:{ legend:{ position:"bottom", labels:{boxWidth:12, font:{size:11, family:"Manrope"}, color:mutedColor} } },
+    scales:{
+      x:{ title:{display:true,text:"Hónap", color:mutedColor}, ticks:{color:mutedColor, font:{family:"IBM Plex Mono", size:10}}, grid:{color:gridColor} },
+      y:{ ticks:{ color:mutedColor, font:{family:"IBM Plex Mono", size:10}, callback:v=>Number(v).toLocaleString("hu-HU") }, grid:{color:gridColor} },
+    },
   };
   const datasetsFor = (metric)=> [
-    { label:"Te", data:[...state.history[metric]], borderColor: CONFIG.playerColor, backgroundColor:CONFIG.playerColor, borderWidth:2.5, pointRadius:0, tension:.25 },
+    { label:"Te", data:[...state.history[metric]], borderColor: playerColor, backgroundColor:playerColor, borderWidth:2.5, pointRadius:0, tension:.25 },
     ...state.competitors.map(c=>({ label:c.name, data:[...c.history[metric]], borderColor:c.color, backgroundColor:c.color, borderWidth:1.5, pointRadius:0, tension:.25, borderDash:[4,3] })),
   ];
   chartCash = new Chart(document.getElementById("chart-cash"), {
